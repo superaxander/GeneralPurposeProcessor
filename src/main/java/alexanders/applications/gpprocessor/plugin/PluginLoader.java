@@ -9,6 +9,9 @@ import alexanders.api.gpprocessor.annotation.EventHandler;
 import alexanders.api.gpprocessor.annotation.Plugin;
 import alexanders.api.gpprocessor.capability.Capability;
 import alexanders.api.gpprocessor.event.GPPEvent;
+import alexanders.api.gpprocessor.event.InitializationEvent;
+import alexanders.api.gpprocessor.event.PostInitializationEvent;
+import alexanders.api.gpprocessor.event.PreInitializationEvent;
 import alexanders.api.gpprocessor.plugin.LoadState;
 import alexanders.api.gpprocessor.plugin.PluginContainer;
 import alexanders.api.gpprocessor.plugin.PluginManager;
@@ -25,6 +28,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 
 public class PluginLoader
 {
@@ -55,7 +59,7 @@ public class PluginLoader
         return map;
     }
 
-    public void autoPopulateInital()
+    public void autoPopulateInitial()
     {
         autoPopulateMap.forEach((pluginID, fields) ->
                                 {
@@ -87,6 +91,22 @@ public class PluginLoader
 
     public void autoPopulateCapabilities(Capability capability)
     {
+
+    }
+
+    public void preInitialize()
+    {
+        plugins.forEach(container -> PluginManager.instance.getMainEventBus().fireEvent(new PreInitializationEvent(Logger.getLogger(container.getID()), new File("./config/" + container.getID()), new File("./config/" + container.getID() + ".cfg"), container.getMetadata(), getLoadStates())));
+    }
+
+    public void initialize()
+    {
+        plugins.forEach(container -> PluginManager.instance.getMainEventBus().fireEvent(new InitializationEvent(getLoadStates())));
+    }
+
+    public void postInitialize()
+    {
+        plugins.forEach(container -> PluginManager.instance.getMainEventBus().fireEvent(new PostInitializationEvent(getLoadStates())));
 
     }
 
