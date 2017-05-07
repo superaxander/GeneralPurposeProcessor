@@ -5,16 +5,20 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
-sourceSets{api}
-
-repositories {
-    mavenCentral()
+sourceSets {
+    api
+    main { java {srcDir sourceSets.api.java.srcDirs }} // IntelliJ gets a bit confused but it works
 }
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}
+    repositories {
+        mavenCentral()
+    }
 
-artifacts {
+    dependencies {
+        compile sourceSets.api.output
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
 
-}
+    artifacts {
+
+    }
