@@ -28,7 +28,7 @@ public class PluginManagerImpl extends PluginManager
     @Override
     public PluginContainer getPlugin(String pluginID)
     {
-        return null;
+        return Entry.instance.loader.getPluginByID(pluginID);
     }
 
     @Override
