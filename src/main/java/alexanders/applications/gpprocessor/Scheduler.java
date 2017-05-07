@@ -8,6 +8,7 @@ import alexanders.api.gpprocessor.event.ShutdownEvent;
 import alexanders.api.gpprocessor.plugin.PluginManager;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class Scheduler
         this.uncaughtExceptionHandler = (t, e) ->
         {
             //TODO: Handle exceptions
+            e.printStackTrace();
         };
     }
 
@@ -55,6 +57,7 @@ public class Scheduler
                                                                                                                                             e.printStackTrace();
                                                                                                                                         }
                                                                                                                                     }));
+                                                                        EventBus.scheduledEvents.clear();
                                                                     }
                                                                 }
                                                             }));
@@ -78,5 +81,16 @@ public class Scheduler
                                                       }
                                                   });
                           });
+    }
+
+    public List<Thread> getThreads(String pluginID)
+    {
+        if (threadMap.containsKey(pluginID))
+        {
+            return threadMap.get(pluginID);
+        } else
+        {
+            return new ArrayList<>();
+        }
     }
 }

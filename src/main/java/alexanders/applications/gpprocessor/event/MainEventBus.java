@@ -8,7 +8,6 @@ import alexanders.api.gpprocessor.event.EventBus;
 import alexanders.api.gpprocessor.event.GPPEvent;
 import alexanders.applications.gpprocessor.plugin.PluginLoader;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +16,11 @@ import java.util.logging.Level;
 
 public class MainEventBus extends EventBus
 {
+    public MainEventBus()
+    {
+        this.eventHandlerMap = new HashMap<>();
+    }
+
     @Override
     public void register(String pluginID, Object eventHandler)
     {
@@ -59,17 +63,13 @@ public class MainEventBus extends EventBus
             Reference.logger.logp(Level.WARNING, "MainEventBus", "fireEvent", "Event: " + event.getType() + " was fired but no handlers were registered for it");
         } else
         {
-            pluginList.forEach((plugin, pairs) -> pairs.forEach(pair -> pair.forEach((object, method) ->
-                                                                                     {
-                                                                                         try
+            synchronized (scheduledEvents)
+            {
+                pluginList.forEach((plugin, pairs) -> pairs.forEach(pair -> pair.forEach((object, method) ->
                                                                                          {
-                                                                                             method.invoke(object, event);
-                                                                                         } catch (IllegalAccessException | InvocationTargetException e)
-                                                                                         {
-                                                                                             Reference.logger.logp(Level.SEVERE, "MainEventBus", "fireEvent", "An earlier check failed, please report!", e);
-                                                                                             throw new RuntimeException(e);
-                                                                                         }
-                                                                                     })));
+                                                                                             scheduledEvents.add(new Triplet<>(event, object, method));
+                                                                                         })));
+            }
         }
     }
 
@@ -88,10 +88,13 @@ public class MainEventBus extends EventBus
                 Reference.logger.logp(Level.WARNING, "MainEventBus", "fireEventAt", "Event: " + event.getType() + " was fired at: " + pluginID + "but no handlers were registered for it");
             } else
             {
-                pluginSpecificList.forEach(pair -> pair.forEach((object, method) ->
-                                                                {
-                                                                    scheduledEvents.add(new Triplet<>(event, object, method));
-                                                                }));
+                synchronized (scheduledEvents)
+                {
+                    pluginSpecificList.forEach(pair -> pair.forEach((object, method) ->
+                                                                    {
+                                                                        scheduledEvents.add(new Triplet<>(event, object, method));
+                                                                    }));
+                }
             }
         }
     }

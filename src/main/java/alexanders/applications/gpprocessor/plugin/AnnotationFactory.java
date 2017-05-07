@@ -9,7 +9,8 @@ public class AnnotationFactory
 {
     public static AutoPopulate buildAutoPopulate(AutoPopulationType type, String pluginID, Class<?> injectedClass)
     {
-        return new AutoPopulate(){
+        return new AutoPopulate()
+        {
 
             @Override
             public Class<? extends Annotation> annotationType()
