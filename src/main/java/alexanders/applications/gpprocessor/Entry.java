@@ -1,7 +1,6 @@
 package alexanders.applications.gpprocessor;
 
 import alexanders.api.gpprocessor.Reference;
-import alexanders.api.gpprocessor.plugin.PluginContainer;
 import alexanders.applications.gpprocessor.plugin.PluginLoader;
 import alexanders.applications.gpprocessor.plugin.PluginSecurityManager;
 import alexanders.applications.gpprocessor.plugin.impl.PluginManagerImpl;
