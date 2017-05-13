@@ -2,29 +2,26 @@ package alexanders.applications.gpprocessor.plugin.impl;
 
 import alexanders.api.gpprocessor.event.IPCEvent;
 import alexanders.api.gpprocessor.plugin.*;
+import alexanders.applications.gpprocessor.plugin.PluginPermission;
+import alexanders.applications.gpprocessor.plugin.PluginSecurityManager;
 
 public class PluginContainerImpl extends PluginContainer
 {
-    private PluginMetadata metadata;
-    private LoadState state;
-    private boolean acceptingIPCMessages;
-    private String[] dependencies;
-    private Class<?> pluginClass;
-    private Object instance;
+    private final PluginMetadata metadata;
+    private final LoadState state;
+    private final String[] dependencies;
+    private final Class<?> pluginClass;
+    private final Object instance;
+    private final ClassLoader classLoader;
 
-    public PluginContainerImpl(PluginMetadata metadata, LoadState state, boolean acceptingIPCMessages, String[] dependencies, Class<?> pluginClass, Object instance)
+    public PluginContainerImpl(PluginMetadata metadata, LoadState state, String[] dependencies, Class<?> pluginClass, Object instance, ClassLoader classLoader)
     {
-        this.metadata = metadata;
+        this.metadata = metadata.clone(); // Disallow metadata editing
         this.state = state;
-        this.acceptingIPCMessages = acceptingIPCMessages;
-        this.dependencies = dependencies;
+        this.dependencies = dependencies.clone();
         this.pluginClass = pluginClass;
         this.instance = instance;
-    }
-
-    private void setAcceptingIPCMessages(boolean value)
-    {
-        this.acceptingIPCMessages = value;
+        this.classLoader = classLoader;
     }
 
     @Override
@@ -43,12 +40,6 @@ public class PluginContainerImpl extends PluginContainer
     public LoadState getState()
     {
         return state;
-    }
-
-    @Override
-    public boolean isAcceptingMessages()
-    {
-        return acceptingIPCMessages;
     }
 
     @Override
@@ -79,5 +70,12 @@ public class PluginContainerImpl extends PluginContainer
     public PluginMetadata getMetadata()
     {
         return metadata;
+    }
+
+    @Override
+    public ClassLoader getClassLoader()
+    {
+        PluginSecurityManager.checkPermissionS(PluginPermission.canGetPluginLoader, metadata.ID);
+        return classLoader;
     }
 }

@@ -172,7 +172,7 @@ public class PluginLoader
                     metadata.version = pluginAnnotation.version();
                     metadata.name = pluginAnnotation.name();
                     instance = c.newInstance();
-                    pluginFound = new PluginContainerImpl(metadata, LoadState.PRE_INIT, acceptingIPCMessages, dependencies, c, instance);
+                    pluginFound = new PluginContainerImpl(metadata, LoadState.PRE_INIT, dependencies, c, instance, loader);
                     plugins.add(pluginFound);
                 }
             }

@@ -1,5 +1,6 @@
 package alexanders.applications.gpprocessor;
 
+import alexanders.api.gpprocessor.Container;
 import alexanders.api.gpprocessor.MapUtil;
 import alexanders.api.gpprocessor.PrioritizedThreads;
 import alexanders.api.gpprocessor.Reference;
@@ -92,5 +93,16 @@ public class Scheduler
         {
             return new ArrayList<>();
         }
+    }
+
+    public String getPluginID(Thread t)
+    {
+        Container<String> found = new Container<>();
+        threadMap.forEach((id, threads) -> threads.forEach(thread ->
+                                                           {
+                                                               if (thread.equals(t))
+                                                                   found.value = id;
+                                                           }));
+        return found.value;
     }
 }
